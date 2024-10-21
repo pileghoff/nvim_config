@@ -25,6 +25,7 @@ require("nvim-treesitter.configs").setup {
 local wk = require("which-key")
 local wk_extra = require("which-key.extras")
 local ts_builtin = require('telescope.builtin')
+require('leap').create_default_mappings()
 
 -- Buffer group
 wk.add({
@@ -70,7 +71,11 @@ wk.add(
 wk.add(
 {
 	{ "<leader>c", group = "code"},
-  { "<leader>fc", "<cmd>Telescope treesitter<cr>", desc = "Navigate code", mode = "n" },
+  { "<leader>cc", ts_builtin.lsp_document_symbols, desc = "Navigate code", mode = "n" },
+  { "<leader>cw", ts_builtin.lsp_dynamic_workspace_symbols, desc = "Navigate code in workspace", mode = "n" },
+  { "<leader>cd", ts_builtin.lsp_definitions, desc = "Definition", mode = "n" },
+  { "<leader>cr", ts_builtin.lsp_references, desc = "References", mode = "n" },
+  { "<leader>cj", ts_builtin.jumplist, desc = "Jumplist", mode = "n" },
 
 }
 )
