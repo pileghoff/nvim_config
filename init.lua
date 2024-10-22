@@ -13,6 +13,8 @@ vim.g.coq_settings = {
   },
 }
 vim.keymap.set("x", "p", function() return 'pgv"' .. vim.v.register .. "y" end, { remap = false, expr = true })
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
 
 require("config.lazy")
 require("nvim-treesitter.configs").setup {
@@ -23,10 +25,12 @@ require("nvim-treesitter.configs").setup {
   },
 }
 
+local neogit = require('neogit')
+neogit.setup {}
+
 local wk = require("which-key")
 local wk_extra = require("which-key.extras")
 local ts_builtin = require('telescope.builtin')
-require('leap').create_default_mappings()
 
 -- Buffer group
 wk.add({
@@ -54,6 +58,10 @@ wk.add(
   { "<leader>w>", "<c-w>>",desc = "Increase width" },
   { "<leader>wT", "<c-w>T",desc = "Break out into a new tab" },
   { "<leader>w_", "<c-w>_",desc = "Max out the height" },
+  { "w<Left>", "<c-w>h",desc = "Go to the left window" },
+  { "w<Down>", "<c-w>j",desc = "Go to the down window" },
+  { "w<Up>", "<c-w>k",desc = "Go to the up window" },
+  { "w<Right>", "<c-w>l",desc = "Go to the right window" },
   { "<leader>w<Left>", "<c-w>h",desc = "Go to the left window" },
   { "<leader>w<Down>", "<c-w>j",desc = "Go to the down window" },
   { "<leader>w<Up>", "<c-w>k",desc = "Go to the up window" },
@@ -75,6 +83,7 @@ wk.add(
   { "<leader>cc", ts_builtin.lsp_document_symbols, desc = "Navigate code", mode = "n" },
   { "<leader>cw", ts_builtin.lsp_dynamic_workspace_symbols, desc = "Navigate code in workspace", mode = "n" },
   { "<leader>cd", ts_builtin.lsp_definitions, desc = "Definition", mode = "n" },
+  { "<leader>ci", ts_builtin.lsp_implementations, desc = "Implementation", mode = "n" },
   { "<leader>cr", ts_builtin.lsp_references, desc = "References", mode = "n" },
   { "<leader>cj", ts_builtin.jumplist, desc = "Jumplist", mode = "n" },
 
@@ -91,3 +100,7 @@ lsp.pyright.setup{}
 lsp.clangd.setup{}
 lsp.clangd.setup(coq.lsp_ensure_capabilities())
 lsp.pyright.setup(coq.lsp_ensure_capabilities())
+
+-- Other plugins
+require('leap')
+require("nvim-tree").setup()
