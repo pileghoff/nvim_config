@@ -1,9 +1,19 @@
+-- Set leader
+vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
+
+-- Configure clipboard to work with system
 vim.opt.clipboard = "unnamedplus"
-vim.opt.tabstop = 2
-vim.opt.shiftwidth = 2
+
+-- Set tabs to a reasonable 4 spaces
+vim.opt.tabstop = 4
+vim.opt.shiftwidth = 4
+
+-- Line numbers + relative
 vim.opt.number = true
 vim.opt.relativenumber = true
+
+-- Set COQ settings now, before loading lazy
 vim.g.coq_settings = {
 	auto_start = "shut-up",
 	clients = {
@@ -12,11 +22,63 @@ vim.g.coq_settings = {
 		},
 	},
 }
+-- keep current content top + left when splitting
+vim.opt.splitright = true
+vim.opt.splitbelow = true
+
+-- Remap parte, so it wont yank what it relpaces
 vim.keymap.set("x", "p", function()
 	return 'pgv"' .. vim.v.register .. "y"
 end, { remap = false, expr = true })
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+
+-- infinite undo!
+-- NOTE: ends up in ~/.local/state/nvim/undo/
+vim.opt.undofile = true
+
+-- case-insensitive search/replace
+vim.opt.ignorecase = true
+-- unless uppercase in search term
+vim.opt.smartcase = true
+
+-- more useful diffs (nvim -d)
+--- by ignoring whitespace
+vim.opt.diffopt:append("iwhite")
+--- and using a smarter algorithm
+--- https://vimways.org/2018/the-power-of-diff/
+--- https://stackoverflow.com/questions/32365271/whats-the-difference-between-git-diff-patience-and-git-diff-histogram
+--- https://luppeng.wordpress.com/2020/10/10/when-to-use-each-of-the-git-diff-algorithms/
+vim.opt.diffopt:append("algorithm:histogram")
+vim.opt.diffopt:append("indent-heuristic")
+
+-- Esc stops search highlight
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<cr>")
+
+-- always center search results
+vim.keymap.set("n", "n", "nzz", { silent = true })
+vim.keymap.set("n", "N", "Nzz", { silent = true })
+vim.keymap.set("n", "*", "*zz", { silent = true })
+vim.keymap.set("n", "#", "#zz", { silent = true })
+vim.keymap.set("n", "g*", "g*zz", { silent = true })
+
+-- highlight yanked text
+vim.api.nvim_create_autocmd("TextYankPost", {
+	pattern = "*",
+	command = "silent! lua vim.highlight.on_yank({ timeout = 500 })",
+})
+--
+-- jump to last edit position on opening file
+vim.api.nvim_create_autocmd("BufReadPost", {
+	pattern = "*",
+	callback = function(ev)
+		if vim.fn.line("'\"") > 1 and vim.fn.line("'\"") <= vim.fn.line("$") then
+			-- except for in git commit messages
+			-- https://stackoverflow.com/questions/31449496/vim-ignore-specifc-file-in-autocommand
+			if not vim.fn.expand("%:p"):find(".git", 1, true) then
+				vim.cmd('exe "normal! g\'\\""')
+			end
+		end
+	end,
+})
 
 require("config.lazy")
 require("nvim-treesitter.configs").setup({
@@ -43,6 +105,10 @@ autocmd("BufWritePost", {
 local wk = require("which-key")
 local wk_extra = require("which-key.extras")
 local ts_builtin = require("telescope.builtin")
+local renamer = require("renamer")
+renamer.setup({
+	show_refs = true,
+})
 
 -- Spell
 wk.add({
@@ -56,13 +122,14 @@ wk.add({
 wk.add({
 	{ "<leader>b", group = "Buffers" },
 	{ "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
-	{ "<leader>bd", "<cmd>bd<cr>", desc = "Delete buffers" },
+	{ "<leader>bd", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffers" },
 })
 
 -- Files group
 wk.add({
 	{ "<leader>f", group = "Files" },
 	{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File", mode = "n" },
+	{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old files" },
 	{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Grep File", mode = "n" },
 })
 
@@ -97,11 +164,18 @@ wk.add({
 wk.add({
 	{ "<leader>c", group = "code" },
 	{ "<leader>cc", ts_builtin.lsp_document_symbols, desc = "Navigate code", mode = "n" },
+	{ "<leader>cn", renamer.rename, desc = "Rename", mode = "n" },
 	{ "<leader>cw", ts_builtin.lsp_dynamic_workspace_symbols, desc = "Navigate code in workspace", mode = "n" },
 	{ "<leader>cd", ts_builtin.lsp_definitions, desc = "Definition", mode = "n" },
 	{ "<leader>ci", ts_builtin.lsp_implementations, desc = "Implementation", mode = "n" },
 	{ "<leader>cr", ts_builtin.lsp_references, desc = "References", mode = "n" },
 	{ "<leader>cj", ts_builtin.jumplist, desc = "Jumplist", mode = "n" },
+	{ "<leader>ce", vim.diagnostic.open_float, desc = "Diagnostic", mode = "n" },
+})
+
+-- Git
+wk.add({
+	{ "<leader>g", "<cmd>Neogit kind=replace<cr>" },
 })
 
 -- Coq setup
@@ -109,8 +183,6 @@ local coq = require("coq")
 
 -- LSP setup
 local lsp = require("lspconfig")
-lsp.pyright.setup({})
-lsp.clangd.setup({})
 lsp.clangd.setup(coq.lsp_ensure_capabilities())
 lsp.pyright.setup(coq.lsp_ensure_capabilities())
 

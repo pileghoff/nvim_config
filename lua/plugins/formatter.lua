@@ -20,6 +20,9 @@ return {
 					require("formatter.filetypes.python").isort,
 					require("formatter.filetypes.python").black,
 				},
+				rust = {
+					require("formatter.filetypes.rust").rustfmt,
+				},
 				["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
 			},
 		})
