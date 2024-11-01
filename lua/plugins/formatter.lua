@@ -23,6 +23,9 @@ return {
 				rust = {
 					require("formatter.filetypes.rust").rustfmt,
 				},
+				zig = {
+					require("formatter.filetypes.zig").zigfmt,
+				},
 				["*"] = { require("formatter.filetypes.any").remove_trailing_whitespace },
 			},
 		})

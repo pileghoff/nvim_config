@@ -2,8 +2,15 @@
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 
+-- Disable netrw, since we use nvimtree
+vim.g.loaded_netrw = 1
+vim.g.loaded_netrwPlugin = 1
+
 -- Configure clipboard to work with system
 vim.opt.clipboard = "unnamedplus"
+
+-- Configure sessionopts
+vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
 
 -- Set tabs to a reasonable 4 spaces
 vim.opt.tabstop = 4
@@ -128,7 +135,9 @@ wk.add({
 -- Files group
 wk.add({
 	{ "<leader>f", group = "Files" },
-	{ "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find File", mode = "n" },
+	{ "<leader><leader>", "<cmd>Telescope find_files<cr>", desc = "Open file tree", mode = "n" },
+	{ "<leader>ff", "<cmd>NvimTreeFocus<cr>", desc = "Find File", mode = "n" },
+	{ "<leader>fe", "<cmd>NvimTreeFindFile<cr>", desc = "Find current file in explorer", mode = "n" },
 	{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old files" },
 	{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Grep File", mode = "n" },
 })
@@ -175,7 +184,7 @@ wk.add({
 
 -- Git
 wk.add({
-	{ "<leader>g", "<cmd>Neogit kind=replace<cr>" },
+	{ "<leader>g", "<cmd>Neogit kind=replace<cr>", desc = "Git" },
 })
 
 -- Coq setup
@@ -185,7 +194,27 @@ local coq = require("coq")
 local lsp = require("lspconfig")
 lsp.clangd.setup(coq.lsp_ensure_capabilities())
 lsp.pyright.setup(coq.lsp_ensure_capabilities())
+lsp.zls.setup(coq.lsp_ensure_capabilities())
 
 -- Other plugins
 require("leap")
-require("nvim-tree").setup()
+require("nvim-tree").setup({
+	git = {
+		enable = false,
+	},
+	actions = {
+		change_dir = {
+			enable = false,
+		},
+		open_file = {
+			window_picker = {
+				enable = false,
+			},
+		},
+	},
+	filters = {
+		enable = true,
+		git_ignored = false,
+		dotfiles = false,
+	},
+})
