@@ -9,9 +9,6 @@ vim.g.loaded_netrwPlugin = 1
 -- Configure clipboard to work with system
 vim.opt.clipboard = "unnamedplus"
 
--- Configure sessionopts
-vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions"
-
 -- Set tabs to a reasonable 4 spaces
 vim.opt.tabstop = 4
 vim.opt.shiftwidth = 4
@@ -88,6 +85,14 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 })
 
 require("config.lazy")
+require("auto-session").setup({
+	pre_save_cmds = { "NvimTreeClose" },
+	post_restore_cmds = { "NvimTreeOpen" },
+	auto_save_enabled = true, -- Enables/disables auto saving
+	auto_restore_enabled = true, --Enables/disables auto restoring
+	auto_session_enabled = true, -- Enables/disables the plugin's auto save and restore features
+})
+
 require("nvim-treesitter.configs").setup({
 	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline" },
 	auto_install = true,
@@ -109,13 +114,42 @@ autocmd("BufWritePost", {
 	command = ":FormatWrite",
 })
 
-local wk = require("which-key")
-local wk_extra = require("which-key.extras")
+-- Files
+require("oil").setup({
+	default_file_explorer = false,
+})
+
+-- Telescope setup
 local ts_builtin = require("telescope.builtin")
+local ts_recent = require("telescope").extensions["recent-files"].recent_files
+local actions = require("telescope.actions")
+require("telescope").setup({
+	pickers = {
+		buffers = {
+			mappings = {
+				n = {
+					["d"] = actions.delete_buffer + actions.move_to_top,
+				},
+			},
+		},
+	},
+})
+function ts_buffers()
+	ts_builtin.buffers({
+		sort_mru = true,
+		ignore_current_buffer = true,
+	})
+end
+
+-- LSP Renamer
 local renamer = require("renamer")
 renamer.setup({
 	show_refs = true,
 })
+
+-- Which-key
+local wk = require("which-key")
+local wk_extra = require("which-key.extras")
 
 -- Spell
 wk.add({
@@ -127,15 +161,14 @@ wk.add({
 
 -- Buffer group
 wk.add({
-	{ "<leader>b", group = "Buffers" },
-	{ "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Search buffers" },
-	{ "<leader>bd", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffers" },
+	{ "<leader>b", ts_buffers, desc = "Search buffers" },
+	{ "<leader>d", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffer" },
 })
 
 -- Files group
 wk.add({
 	{ "<leader>f", group = "Files" },
-	{ "<leader><leader>", "<cmd>Telescope find_files<cr>", desc = "Open file tree", mode = "n" },
+	{ "<leader><leader>", ts_recent, desc = "Open file tree", mode = "n" },
 	{ "<leader>ff", "<cmd>NvimTreeFocus<cr>", desc = "Find File", mode = "n" },
 	{ "<leader>fe", "<cmd>NvimTreeFindFile<cr>", desc = "Find current file in explorer", mode = "n" },
 	{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old files" },
