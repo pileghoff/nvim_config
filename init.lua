@@ -17,15 +17,9 @@ vim.opt.shiftwidth = 4
 vim.opt.number = true
 vim.opt.relativenumber = true
 
--- Set COQ settings now, before loading lazy
-vim.g.coq_settings = {
-	auto_start = "shut-up",
-	clients = {
-		snippets = {
-			warn = {},
-		},
-	},
-}
+-- Updatetime
+vim.opt.updatetime = 1000
+
 -- keep current content top + left when splitting
 vim.opt.splitright = true
 vim.opt.splitbelow = true
@@ -95,6 +89,7 @@ require("auto-session").setup({
 
 require("nvim-treesitter.configs").setup({
 	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline" },
+	indent = { enable = true },
 	auto_install = true,
 	highlight = {
 		enable = true,
@@ -137,6 +132,7 @@ local neogit = require("neogit")
 neogit.setup({})
 
 -- Formatter
+require("gruvbox").setup()
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 augroup("__formatter__", { clear = true })
@@ -196,7 +192,7 @@ wk.add({
 	{ "<leader>d", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffer" },
 })
 
--- Files group
+-- Files groupst
 wk.add({
 	{ "<leader>f", group = "Files" },
 	{ "<leader><leader>", ts_recent, desc = "Open file tree", mode = "n" },
@@ -232,6 +228,13 @@ wk.add({
 	{ "<leader>wx", "<c-w>x", desc = "Swap current with next" },
 	{ "<leader>w|", "<c-w>|", desc = "Max out the width" },
 })
+wk.add({
+	{ "z=<Up>", "", hidden = true },
+	{ "z=<Down>", "", hidden = true },
+	{ "z=<Left>", "", hidden = true },
+	{ "z=<Right>", "", hidden = true },
+	{ "z=:", "", hidden = true },
+})
 
 -- Code group
 wk.add({
@@ -251,17 +254,55 @@ wk.add({
 	{ "<leader>g", "<cmd>Neogit kind=replace<cr>", desc = "Git" },
 })
 
--- Coq setup
-local coq = require("coq")
+-- Spell check on cursorhold
+vim.api.nvim_create_autocmd("CursorHold", {
+	pattern = { "*" },
+	callback = function()
+		if require("cmp.config.context").in_treesitter_capture("spell") then
+			local word = vim.fn.expand("<cword>")
+			if table.getn(vim.spell.check(word)) > 0 then
+				local bad = vim.spell.check(word)
+				wk.show({ keys = "z=" })
+			end
+		end
+	end,
+})
+
+-- Cmp setup
+local cmp = require("cmp")
+cmp.setup({
+	completion = {
+		completeopt = "menu,menuone,preview,noselect",
+	},
+	sources = cmp.config.sources({
+		{ name = "nvim_lsp" },
+		{ name = "path" },
+	}),
+	mapping = cmp.mapping.preset.insert({
+		["<Up>"] = cmp.mapping.select_prev_item(), -- previous suggestion
+		["<Down>"] = cmp.mapping.select_next_item(), -- next suggestion
+		["<Tab>"] = cmp.mapping.select_next_item(), -- next suggestion
+		["<C-b>"] = cmp.mapping.scroll_docs(-4),
+		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
+		["<C-e>"] = cmp.mapping.abort(), -- close completion window
+		["<CR>"] = cmp.mapping.confirm({ select = false }), -- Confirm selection
+		["<ESC>"] = cmp.mapping.abort(), -- Close completion window
+	}),
+})
+local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
 -- LSP setup
 local lsp = require("lspconfig")
-lsp.clangd.setup(coq.lsp_ensure_capabilities())
-lsp.pyright.setup(coq.lsp_ensure_capabilities())
-lsp.zls.setup(coq.lsp_ensure_capabilities())
+lsp.clangd.setup(capabilities)
+lsp.pyright.setup(capabilities)
+lsp.zls.setup(capabilities)
 
 -- Other plugins
-require("leap")
+require("flash").setup()
+--require("leap").setup({
+--	safe_labels = "",
+--})
 require("nvim-tree").setup({
 	git = {
 		enable = false,
