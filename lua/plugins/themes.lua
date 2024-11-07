@@ -2,6 +2,11 @@ return {
 	{
 		"rebelot/kanagawa.nvim",
 		lazy = false,
+		config = function()
+			-- load the colorscheme here
+			vim.cmd("colorscheme kanagawa-wave")
+			vim.o.background = "dark"
+		end,
 	},
 	{
 		"folke/tokyonight.nvim",
@@ -12,11 +17,6 @@ return {
 		"ellisonleao/gruvbox.nvim",
 		priority = 1000,
 		config = true,
-		config = function()
-			-- load the colorscheme here
-			vim.cmd("colorscheme gruvbox")
-			vim.o.background = "dark"
-		end,
 		opts = {
 			dim_inactive = true,
 		},

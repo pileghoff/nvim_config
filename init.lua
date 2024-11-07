@@ -80,15 +80,13 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 
 require("config.lazy")
 require("auto-session").setup({
-	pre_save_cmds = { "NvimTreeClose" },
-	post_restore_cmds = { "NvimTreeOpen" },
 	auto_save_enabled = true, -- Enables/disables auto saving
 	auto_restore_enabled = true, --Enables/disables auto restoring
 	auto_session_enabled = true, -- Enables/disables the plugin's auto save and restore features
 })
 
 require("nvim-treesitter.configs").setup({
-	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline" },
+	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline", "regex" },
 	indent = { enable = true },
 	auto_install = true,
 	highlight = {
@@ -193,11 +191,14 @@ wk.add({
 })
 
 -- Files groupst
+function OpenOilCwd()
+	require("oil").open(vim.fn["getcwd"]())
+end
 wk.add({
 	{ "<leader>f", group = "Files" },
 	{ "<leader><leader>", ts_recent, desc = "Open file tree", mode = "n" },
-	{ "<leader>ff", "<cmd>NvimTreeFocus<cr>", desc = "Find File", mode = "n" },
-	{ "<leader>fe", "<cmd>NvimTreeFindFile<cr>", desc = "Find current file in explorer", mode = "n" },
+	{ "<leader>ff", OpenOilCwd, desc = "Find File", mode = "n" },
+	{ "<leader>fe", "<cmd>Oil<cr>", desc = "Find current file in explorer", mode = "n" },
 	{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old files" },
 	{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Grep File", mode = "n" },
 })
@@ -247,6 +248,7 @@ wk.add({
 	{ "<leader>cr", ts_builtin.lsp_references, desc = "References", mode = "n" },
 	{ "<leader>cj", ts_builtin.jumplist, desc = "Jumplist", mode = "n" },
 	{ "<leader>ce", vim.diagnostic.open_float, desc = "Diagnostic", mode = "n" },
+	{ "<leader>ch", vim.lsp.buf.hover, desc = "Diagnostic", mode = "n" },
 })
 
 -- Git
@@ -255,18 +257,18 @@ wk.add({
 })
 
 -- Spell check on cursorhold
-vim.api.nvim_create_autocmd("CursorHold", {
-	pattern = { "*" },
-	callback = function()
-		if require("cmp.config.context").in_treesitter_capture("spell") then
-			local word = vim.fn.expand("<cword>")
-			if table.getn(vim.spell.check(word)) > 0 then
-				local bad = vim.spell.check(word)
-				wk.show({ keys = "z=" })
-			end
-		end
-	end,
-})
+--vim.api.nvim_create_autocmd("CursorHold", {
+--	pattern = { "*" },
+--	callback = function()
+--		if require("cmp.config.context").in_treesitter_capture("spell") then
+--			local word = vim.fn.expand("<cword>")
+--			if table.getn(vim.spell.check(word)) > 0 then
+--				local bad = vim.spell.check(word)
+--				wk.show({ keys = "z=" })
+--			end
+--		end
+--	end,
+--})
 
 -- Cmp setup
 local cmp = require("cmp")
@@ -300,26 +302,40 @@ lsp.zls.setup(capabilities)
 
 -- Other plugins
 require("flash").setup()
---require("leap").setup({
---	safe_labels = "",
---})
-require("nvim-tree").setup({
-	git = {
-		enable = false,
-	},
-	actions = {
-		change_dir = {
-			enable = false,
+
+-- Noice
+require("noice").setup({
+	lsp = {
+		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+		override = {
+			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+			["vim.lsp.util.stylize_markdown"] = true,
+			["cmp.entry.get_documentation"] = true, -- requires hr shush/nvim-cmp
 		},
-		open_file = {
-			window_picker = {
-				enable = false,
+	},
+	-- you can enable a preset for easier configuration
+	presets = {
+		bottom_search = true, -- use a classic bottom cmdline for search
+		inc_rename = true, -- enables an input dialog for inc-rename.nvim
+		lsp_doc_border = true, -- add a border to hover docs and signature help
+	},
+	views = {
+		popupmenu = {
+			position = {
+				row = "65%",
+				col = "50%",
+			},
+			size = {
+				width = 60,
+				height = 10,
+			},
+			border = {
+				style = "rounded",
+				padding = { 0, 1 },
+			},
+			win_options = {
+				winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
 			},
 		},
-	},
-	filters = {
-		enable = true,
-		git_ignored = false,
-		dotfiles = false,
 	},
 })
