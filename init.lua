@@ -318,24 +318,6 @@ require("noice").setup({
 		bottom_search = true, -- use a classic bottom cmdline for search
 		inc_rename = true, -- enables an input dialog for inc-rename.nvim
 		lsp_doc_border = true, -- add a border to hover docs and signature help
-	},
-	views = {
-		popupmenu = {
-			position = {
-				row = "65%",
-				col = "50%",
-			},
-			size = {
-				width = 60,
-				height = 10,
-			},
-			border = {
-				style = "rounded",
-				padding = { 0, 1 },
-			},
-			win_options = {
-				winhighlight = { Normal = "Normal", FloatBorder = "DiagnosticInfo" },
-			},
-		},
+		long_message_to_split = true, -- long messages will be sent to a split
 	},
 })
