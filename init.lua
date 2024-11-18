@@ -158,6 +158,7 @@ require("telescope").setup({
 			},
 		},
 	},
+	defaults = { path_display = { "truncate" } },
 })
 function ts_buffers()
 	ts_builtin.buffers({
@@ -213,10 +214,6 @@ wk.add({
 	{ "<leader>w>", "<c-w>>", desc = "Increase width" },
 	{ "<leader>wT", "<c-w>T", desc = "Break out into a new tab" },
 	{ "<leader>w_", "<c-w>_", desc = "Max out the height" },
-	{ "w<Left>", "<c-w>h", desc = "Go to the left window" },
-	{ "w<Down>", "<c-w>j", desc = "Go to the down window" },
-	{ "w<Up>", "<c-w>k", desc = "Go to the up window" },
-	{ "w<Right>", "<c-w>l", desc = "Go to the right window" },
 	{ "<leader>w<Left>", "<c-w>h", desc = "Go to the left window" },
 	{ "<leader>w<Down>", "<c-w>j", desc = "Go to the down window" },
 	{ "<leader>w<Up>", "<c-w>k", desc = "Go to the up window" },
