@@ -97,7 +97,6 @@ require("nvim-treesitter.configs").setup({
 -- Hardtime
 require("hardtime").setup({
 
-	disabled_filetypes = { "qf", "netrw", "NvimTree", "lazy", "mason", "oil" },
 	disabled_keys = {
 		["<Up>"] = {},
 		["<Down>"] = {},
@@ -173,9 +172,29 @@ renamer.setup({
 	show_refs = true,
 })
 
+function grug_far()
+	require("grug-far").open({
+		prefills = { paths = vim.fn.expand("%") },
+		transient = true,
+	})
+end
+
+function grug_far_replace()
+	require("grug-far").open({
+		prefills = { paths = vim.fn.expand("%") },
+		transient = true,
+		engine = "astgrep",
+	})
+end
+
 -- Which-key
 local wk = require("which-key")
 local wk_extra = require("which-key.extras")
+
+wk.add({
+	{ "/", grug_far, desc = "Find and replace" },
+	{ "%", grug_far_replace, desc = "Find and replace" },
+})
 
 -- Spell
 wk.add({
