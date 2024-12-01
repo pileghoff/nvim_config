@@ -174,14 +174,12 @@ renamer.setup({
 
 function grug_far()
 	require("grug-far").open({
-		prefills = { paths = vim.fn.expand("%") },
 		transient = true,
 	})
 end
 
 function grug_far_replace()
 	require("grug-far").open({
-		prefills = { paths = vim.fn.expand("%") },
 		transient = true,
 		engine = "astgrep",
 	})
@@ -322,20 +320,42 @@ lsp.zls.setup(capabilities)
 require("flash").setup()
 
 -- Noice
---require("noice").setup({
---	lsp = {
---		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
---		override = {
---			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
---			["vim.lsp.util.stylize_markdown"] = true,
---			["cmp.entry.get_documentation"] = true, -- requires hr shush/nvim-cmp
---		},
---	},
---	-- you can enable a preset for easier configuration
---	presets = {
---		bottom_search = true, -- use a classic bottom cmdline for search
---		inc_rename = true, -- enables an input dialog for inc-rename.nvim
---		lsp_doc_border = true, -- add a border to hover docs and signature help
---		long_message_to_split = true, -- long messages will be sent to a split
---	},
---})
+require("noice").setup({
+	lsp = {
+		-- override markdown rendering so that **cmp** and other plugins use **Treesitter**
+		override = {
+			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
+			["vim.lsp.util.stylize_markdown"] = true,
+			["cmp.entry.get_documentation"] = true, -- requires hr shush/nvim-cmp
+		},
+	},
+	-- you can enable a preset for easier configuration
+	presets = {
+		bottom_search = true, -- use a classic bottom cmdline for search
+		inc_rename = true, -- enables an input dialog for inc-rename.nvim
+		lsp_doc_border = true, -- add a border to hover docs and signature help
+		long_message_to_split = true, -- long messages will be sent to a split
+	},
+	routes = {
+		{
+			filter = { find = "written" },
+			opts = { skip = true },
+		},
+
+		{
+			filter = {
+				event = "notify",
+				cond = function(message)
+					return message.opts and message.opts.title == "Formatter" or message.opts.title == "lazy.nvim"
+				end,
+				warning = false,
+				error = false,
+			},
+			opts = { skip = true },
+		},
+		{
+			view = "cmdline",
+			filter = { min_length = 60 },
+		},
+	},
+})
