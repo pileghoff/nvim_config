@@ -187,20 +187,12 @@ function grug_far()
 	})
 end
 
-function grug_far_replace()
-	require("grug-far").open({
-		transient = true,
-		engine = "astgrep",
-	})
-end
-
 -- Which-key
 local wk = require("which-key")
 local wk_extra = require("which-key.extras")
 
 wk.add({
-	{ "/", grug_far, desc = "Find and replace" },
-	{ "%", grug_far_replace, desc = "Find and replace" },
+	{ "%", grug_far, desc = "Find and replace" },
 })
 
 -- Spell
