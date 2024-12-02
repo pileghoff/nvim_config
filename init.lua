@@ -1,6 +1,7 @@
 -- Set leader
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
+vim.g.maplocalleader = " "
 
 -- Disable netrw, since we use nvimtree
 vim.g.loaded_netrw = 1
@@ -170,6 +171,14 @@ end
 local renamer = require("renamer")
 renamer.setup({
 	show_refs = true,
+})
+
+-- Grug setup
+vim.api.nvim_create_autocmd("BufLeave", {
+	pattern = "Grug FAR*",
+	callback = function(ev)
+		vim.api.nvim_buf_delete(ev.buf, {})
+	end,
 })
 
 function grug_far()
