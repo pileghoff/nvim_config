@@ -356,5 +356,20 @@ require("noice").setup({
 			},
 			opts = { skip = true },
 		},
+		{
+			filter = {
+				event = "notify",
+				cond = function(message)
+					return message.opts and message.opts.title == "Formatter" or message.opts.title == "lazy.nvim"
+				end,
+			},
+			view = "mini",
+		},
+		{
+			filter = {
+				min_width = 100,
+			},
+			view = "mini",
+		},
 	},
 })
