@@ -3,8 +3,7 @@ vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
 
--- Disable netrw, since we use nvimtree
-vim.g.loaded_netrw = 1
+-- Disable netrw, since we use nvimtree vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
 -- Configure clipboard to work with system
@@ -93,37 +92,16 @@ require("nvim-treesitter.configs").setup({
 	highlight = {
 		enable = true,
 	},
-})
-
--- Hardtime
-require("hardtime").setup({
-
-	disabled_keys = {
-		["<Up>"] = {},
-		["<Down>"] = {},
-		["<Left>"] = {},
-		["<Right>"] = {},
-	},
-	disable_mouse = false,
-	restricted_keys = {
-		["<Up>"] = { "n", "x" },
-		["<Down>"] = { "n", "x" },
-		["<Left>"] = { "n", "x" },
-		["<Right>"] = { "n", "x" },
-		["h"] = { "n", "x" },
-		["j"] = { "n", "x" },
-		["k"] = { "n", "x" },
-		["l"] = { "n", "x" },
-		["-"] = { "n", "x" },
-		["+"] = { "n", "x" },
-		["gj"] = { "n", "x" },
-		["gk"] = { "n", "x" },
-		["<CR>"] = { "n", "x" },
-		["<C-M>"] = { "n", "x" },
-		["<C-N>"] = { "n", "x" },
-		["<C-P>"] = { "n", "x" },
+	incremental_selection = {
+  		enable = true,
+  		keymaps = {
+    		node_incremental = "v",
+    		node_decremental = "V",
+  		},
 	},
 })
+
+
 
 -- Git
 local neogit = require("neogit")
@@ -187,14 +165,48 @@ function grug_far()
 	})
 end
 
+function grug_far_local()
+	require("grug-far").open({
+		transient = true,
+		prefills = { paths = vim.fn.expand("%") }
+	})
+end
+
+function grug_far_visual()
+	require("grug-far").with_visual_selection({
+		transient = true,
+	})
+end
+
+function grug_far_local_visual()
+	require("grug-far").with_visual_selection({
+		transient = true,
+		prefills = { paths = vim.fn.expand("%") }
+	})
+end
+
 -- Which-key
 local wk = require("which-key")
 local wk_extra = require("which-key.extras")
 
 wk.add({
-	{ "%", grug_far, desc = "Find and replace" },
-})
+	{ "<C-f>", grug_far_local, desc = "Find and replace", mode="n"  },
+	{ "<s-f>", grug_far, desc = "Find and replace", mode="n" },
+	{ "<C-f>", grug_far_local_visual, desc = "Find and replace", mode="v" },
+	{ "<s-f>", grug_far_visual, desc = "Find and replace", mode="v" },
+	{ "<C-s>", ":w<cr>", desc = "Save" },
+	{ "<C-p>", ts_recent, },
+	{ "<C-z>", "u", },
+	{ "<C-r>", ":redo<cr>", },
+	{ "<C-c>", "yiw", }, -- Yank word
+	{ "<S-Up>", "6k", mode="n"},
+	{ "<S-Down>", "6j", mode="n"},
+	{ "<S-Left>", "^"},
+	{ "<S-Right>", "$"},
+	{ "<S-Down>", ":m '>+1<CR>gv=gv", mode="v"},
+	{ "<S-Up>", ":m '<-2<CR>gv=gv", mode="v"},
 
+})
 -- Spell
 wk.add({
 	{ "<leader>s", group = "Spell checker" },
