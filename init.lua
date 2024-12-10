@@ -93,15 +93,13 @@ require("nvim-treesitter.configs").setup({
 		enable = true,
 	},
 	incremental_selection = {
-  		enable = true,
-  		keymaps = {
-    		node_incremental = "v",
-    		node_decremental = "V",
-  		},
+		enable = true,
+		keymaps = {
+			node_incremental = "v",
+			node_decremental = "V",
+		},
 	},
 })
-
-
 
 -- Git
 local neogit = require("neogit")
@@ -168,7 +166,7 @@ end
 function grug_far_local()
 	require("grug-far").open({
 		transient = true,
-		prefills = { paths = vim.fn.expand("%") }
+		prefills = { paths = vim.fn.expand("%") },
 	})
 end
 
@@ -181,7 +179,7 @@ end
 function grug_far_local_visual()
 	require("grug-far").with_visual_selection({
 		transient = true,
-		prefills = { paths = vim.fn.expand("%") }
+		prefills = { paths = vim.fn.expand("%") },
 	})
 end
 
@@ -190,22 +188,21 @@ local wk = require("which-key")
 local wk_extra = require("which-key.extras")
 
 wk.add({
-	{ "<C-f>", grug_far_local, desc = "Find and replace", mode="n"  },
-	{ "<s-f>", grug_far, desc = "Find and replace", mode="n" },
-	{ "<C-f>", grug_far_local_visual, desc = "Find and replace", mode="v" },
-	{ "<s-f>", grug_far_visual, desc = "Find and replace", mode="v" },
+	{ "<C-f>", grug_far_local, desc = "Find and replace", mode = "n" },
+	{ "<s-f>", grug_far, desc = "Find and replace", mode = "n" },
+	{ "<C-f>", grug_far_local_visual, desc = "Find and replace", mode = "v" },
+	{ "<s-f>", grug_far_visual, desc = "Find and replace", mode = "v" },
 	{ "<C-s>", ":w<cr>", desc = "Save" },
-	{ "<C-p>", ts_recent, },
-	{ "<C-z>", "u", },
-	{ "<C-r>", ":redo<cr>", },
-	{ "<C-c>", "yiw", }, -- Yank word
-	{ "<S-Up>", "6k", mode="n"},
-	{ "<S-Down>", "6j", mode="n"},
-	{ "<S-Left>", "^"},
-	{ "<S-Right>", "$"},
-	{ "<S-Down>", ":m '>+1<CR>gv=gv", mode="v"},
-	{ "<S-Up>", ":m '<-2<CR>gv=gv", mode="v"},
-
+	{ "<C-p>", ts_recent },
+	{ "<C-z>", "u" },
+	{ "<C-r>", ":redo<cr>" },
+	{ "<C-c>", "yiw" }, -- Yank word
+	{ "<C-Up>", "6k", mode = "n" },
+	{ "<C-Down>", "6j", mode = "n" },
+	--{ "<C-Left>", "^" },
+	--{ "<C-Right>", "$" },
+	{ "<C-Down>", ":m '>+1<CR>gv=gv", mode = "v" },
+	{ "<C-Up>", ":m '<-2<CR>gv=gv", mode = "v" },
 })
 -- Spell
 wk.add({
