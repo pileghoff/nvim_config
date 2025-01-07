@@ -159,36 +159,36 @@ vim.api.nvim_create_autocmd("BufLeave", {
 require("spectre").setup({ is_block_ui_break = true })
 
 function grug_far()
-	--require("grug-far").open({
-	--	transient = true,
-	--})
-	require("spectre").toggle()
+	require("grug-far").open({
+		transient = true,
+	})
+	--require("spectre").toggle()
 end
 
 function grug_far_local()
-	--require("grug-far").open({
-	--	transient = true,
-	--	prefills = { paths = vim.fn.expand("%") },
-	--})
+	require("grug-far").open({
+		transient = true,
+		prefills = { paths = vim.fn.expand("%") },
+	})
 
-	require("spectre").open_file_search()
+	--require("spectre").open_file_search()
 end
 
 function grug_far_visual()
-	--require("grug-far").with_visual_selection({
-	--	transient = true,
-	--})
+	require("grug-far").with_visual_selection({
+		transient = true,
+	})
 
-	require("spectre").open_visual({ select_word = true })
+	--require("spectre").open_visual({ select_word = true })
 end
 
 function grug_far_local_visual()
-	--require("grug-far").with_visual_selection({
-	--	transient = true,
-	--	prefills = { paths = vim.fn.expand("%") },
-	--})
+	require("grug-far").with_visual_selection({
+		transient = true,
+		prefills = { paths = vim.fn.expand("%") },
+	})
 
-	require("spectre").open_file_search({ select_word = true })
+	--require("spectre").open_file_search({ select_word = true })
 end
 
 -- Which-key

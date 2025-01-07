@@ -1,11 +1,14 @@
 return {
-	"MagicDuck/grug-far.nvim",
-	opts = { headerMaxWidth = 80 },
+	"pileghoff/grug-far.nvim",
+	branch = "dont_show_preview",
+	--dir = "~/grug-far.nvim/",
+	opts = {
+		headerMaxWidth = 80,
+		wrap = false,
+	},
 	config = function()
 		require("grug-far").setup({
-			-- options, see Configuration section below
-			-- there are no required options atm
-			-- engine = 'ripgrep' is default, but 'astgrep' can be specified
+			wrap = false,
 		})
 	end,
 }
