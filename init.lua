@@ -2,7 +2,6 @@
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-
 -- Disable netrw, since we use nvimtree vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -37,6 +36,9 @@ vim.opt.undofile = true
 vim.opt.ignorecase = true
 -- unless uppercase in search term
 vim.opt.smartcase = true
+
+-- Remove signcolumn
+vim.g.signcolumn = no
 
 -- more useful diffs (nvim -d)
 --- by ignoring whitespace
@@ -368,4 +370,37 @@ require("noice").setup({
 			view = "mini",
 		},
 	},
+})
+require("lualine").setup()
+
+-- Setup my prefered window settings every time i switch.
+vim.api.nvim_create_autocmd({ "WinLeave" }, {
+	pattern = { "*" },
+	callback = function()
+		vim.wo.relativenumber = false
+		vim.wo.number = true
+		vim.wo.numberwidth = 5
+		vim.wo.cursorline = false
+		vim.wo.cursorcolumn = false
+		vim.o.signcolumn = "no"
+	end,
+})
+vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
+	pattern = { "*" },
+	callback = function()
+		vim.wo.relativenumber = true
+		vim.wo.number = true
+		vim.wo.numberwidth = 5
+		vim.wo.cursorline = true
+		vim.wo.cursorcolumn = false
+		vim.o.signcolumn = "no"
+	end,
+})
+
+-- Auto reload contents of a buffer
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
+	pattern = { "*" },
+	callback = function()
+		vim.api.nvim_command("checktime")
+	end,
 })
