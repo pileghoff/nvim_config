@@ -156,31 +156,39 @@ vim.api.nvim_create_autocmd("BufLeave", {
 		vim.api.nvim_buf_delete(ev.buf, {})
 	end,
 })
+require("spectre").setup({ is_block_ui_break = true })
 
 function grug_far()
-	require("grug-far").open({
-		transient = true,
-	})
+	--require("grug-far").open({
+	--	transient = true,
+	--})
+	require("spectre").toggle()
 end
 
 function grug_far_local()
-	require("grug-far").open({
-		transient = true,
-		prefills = { paths = vim.fn.expand("%") },
-	})
+	--require("grug-far").open({
+	--	transient = true,
+	--	prefills = { paths = vim.fn.expand("%") },
+	--})
+
+	require("spectre").open_file_search()
 end
 
 function grug_far_visual()
-	require("grug-far").with_visual_selection({
-		transient = true,
-	})
+	--require("grug-far").with_visual_selection({
+	--	transient = true,
+	--})
+
+	require("spectre").open_visual({ select_word = true })
 end
 
 function grug_far_local_visual()
-	require("grug-far").with_visual_selection({
-		transient = true,
-		prefills = { paths = vim.fn.expand("%") },
-	})
+	--require("grug-far").with_visual_selection({
+	--	transient = true,
+	--	prefills = { paths = vim.fn.expand("%") },
+	--})
+
+	require("spectre").open_file_search({ select_word = true })
 end
 
 -- Which-key
@@ -296,29 +304,8 @@ wk.add({
 --	end,
 --})
 
--- Cmp setup
-local cmp = require("cmp")
-cmp.setup({
-	completion = {
-		completeopt = "menu,menuone,preview,noselect",
-	},
-	sources = cmp.config.sources({
-		{ name = "nvim_lsp" },
-		{ name = "path" },
-	}),
-	mapping = cmp.mapping.preset.insert({
-		["<Up>"] = cmp.mapping.select_prev_item(), -- previous suggestion
-		["<Down>"] = cmp.mapping.select_next_item(), -- next suggestion
-		["<Tab>"] = cmp.mapping.select_next_item(), -- next suggestion
-		["<C-b>"] = cmp.mapping.scroll_docs(-4),
-		["<C-f>"] = cmp.mapping.scroll_docs(4),
-		["<C-Space>"] = cmp.mapping.complete(), -- show completion suggestions
-		["<C-e>"] = cmp.mapping.abort(), -- close completion window
-		["<CR>"] = cmp.mapping.confirm({ select = false }), -- Confirm selection
-		["<ESC>"] = cmp.mapping.abort(), -- Close completion window
-	}),
-})
-local capabilities = require("cmp_nvim_lsp").default_capabilities()
+-- Blink LSP setup
+local capabilities = require("blink.cmp").get_lsp_capabilities()
 
 -- LSP setup
 local lsp = require("lspconfig")

@@ -1,5 +1,6 @@
 return {
 	"MagicDuck/grug-far.nvim",
+	opts = { headerMaxWidth = 80 },
 	config = function()
 		require("grug-far").setup({
 			-- options, see Configuration section below
