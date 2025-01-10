@@ -152,19 +152,33 @@ renamer.setup({
 })
 
 -- Grug setup
+vim.api.nvim_create_autocmd("BufEnter", {
+	pattern = "Grug FAR*",
+	callback = function(ev)
+		local win = vim.fn.bufwinid(ev.buf)
+		if win > 0 then
+			vim.api.nvim_win_set_width(win, 80)
+			vim.api.nvim_win_call(win, function()
+				vim.cmd([[normal! z0]])
+			end)
+		end
+	end,
+})
+
 vim.api.nvim_create_autocmd("BufLeave", {
 	pattern = "Grug FAR*",
 	callback = function(ev)
-		vim.api.nvim_buf_delete(ev.buf, {})
+		local win = vim.fn.bufwinid(ev.buf)
+		if win > 0 then
+			vim.api.nvim_win_set_width(win, 20)
+		end
 	end,
 })
-require("spectre").setup({ is_block_ui_break = true })
 
 function grug_far()
 	require("grug-far").open({
 		transient = true,
 	})
-	--require("spectre").toggle()
 end
 
 function grug_far_local()
@@ -172,16 +186,12 @@ function grug_far_local()
 		transient = true,
 		prefills = { paths = vim.fn.expand("%") },
 	})
-
-	--require("spectre").open_file_search()
 end
 
 function grug_far_visual()
 	require("grug-far").with_visual_selection({
 		transient = true,
 	})
-
-	--require("spectre").open_visual({ select_word = true })
 end
 
 function grug_far_local_visual()
@@ -189,8 +199,6 @@ function grug_far_local_visual()
 		transient = true,
 		prefills = { paths = vim.fn.expand("%") },
 	})
-
-	--require("spectre").open_file_search({ select_word = true })
 end
 
 -- Which-key
@@ -314,6 +322,7 @@ local lsp = require("lspconfig")
 lsp.clangd.setup(capabilities)
 lsp.pyright.setup(capabilities)
 lsp.zls.setup(capabilities)
+lsp.rust_analyzer.setup(capabilities)
 
 -- Other plugins
 require("flash").setup()
@@ -380,7 +389,7 @@ vim.api.nvim_create_autocmd({ "WinLeave" }, {
 		vim.wo.relativenumber = false
 		vim.wo.number = true
 		vim.wo.numberwidth = 5
-		vim.wo.cursorline = false
+		vim.wo.cursorline = true
 		vim.wo.cursorcolumn = false
 		vim.o.signcolumn = "no"
 	end,
