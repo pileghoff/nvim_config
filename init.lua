@@ -53,6 +53,12 @@ vim.opt.diffopt:append("indent-heuristic")
 -- Esc stops search highlight
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<cr>")
 
+-- views can only be fully collapsed with the global statusline
+vim.opt.laststatus = 3
+-- Default splitting will cause your main splits to jump when opening an edgebar.
+-- To prevent this, set `splitkeep` to either `screen` or `topline`.
+vim.opt.splitkeep = "screen"
+
 -- always center search results
 vim.keymap.set("n", "n", "nzz", { silent = true })
 vim.keymap.set("n", "N", "Nzz", { silent = true })
@@ -119,7 +125,19 @@ autocmd("BufWritePost", {
 
 -- Files
 require("oil").setup({
-	default_file_explorer = false,
+	default_file_explorer = true,
+	skip_confirm_for_simple_edits = true,
+	lsp_file_methods = {
+		autosave_changes = "unmodified",
+	},
+	watch_for_changes = true,
+	view_options = {
+		-- Show files and directories that start with "."
+		show_hidden = true,
+	},
+	keymaps = {
+		["h"] = { "actions.toggle_hidden", mode = "n" },
+	},
 })
 
 -- Telescope setup
@@ -152,6 +170,7 @@ renamer.setup({
 })
 
 -- Grug setup
+--[[
 vim.api.nvim_create_autocmd("BufEnter", {
 	pattern = "Grug FAR*",
 	callback = function(ev)
@@ -159,7 +178,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		if win > 0 then
 			vim.api.nvim_win_set_width(win, 80)
 			vim.api.nvim_win_call(win, function()
-				vim.cmd([[normal! z0]])
+				vim.cmd(normal! z0)
 			end)
 		end
 	end,
@@ -174,28 +193,47 @@ vim.api.nvim_create_autocmd("BufLeave", {
 		end
 	end,
 })
+--]]
+function gruginator()
+	grug = require("grug-far")
+	if grug.has_instance("far") then
+		grug.kill_instance("far")
+	end
+end
 
 function grug_far()
+	gruginator()
 	require("grug-far").open({
+		instanceName = "far",
+		staticTitle = "Find and Replace",
 		transient = true,
 	})
 end
 
 function grug_far_local()
+	gruginator()
 	require("grug-far").open({
+		instanceName = "far",
+		staticTitle = "Find and Replace",
 		transient = true,
 		prefills = { paths = vim.fn.expand("%") },
 	})
 end
 
 function grug_far_visual()
+	gruginator()
 	require("grug-far").with_visual_selection({
+		instanceName = "far",
+		staticTitle = "Find and Replace",
 		transient = true,
 	})
 end
 
 function grug_far_local_visual()
+	gruginator()
 	require("grug-far").with_visual_selection({
+		instanceName = "far",
+		staticTitle = "Find and Replace",
 		transient = true,
 		prefills = { paths = vim.fn.expand("%") },
 	})
@@ -240,7 +278,11 @@ wk.add({
 function OpenOilCwd()
 	require("oil").open(vim.fn["getcwd"]())
 end
+function OpenEdgy()
+	require("edgy").toggle()
+end
 wk.add({
+	{ "<leader>e", OpenEdgy, desc = "Open edgy" },
 	{ "<leader>f", group = "Files" },
 	{ "<leader><leader>", ts_recent, desc = "Open file tree", mode = "n" },
 	{ "<leader>ff", OpenOilCwd, desc = "Find File", mode = "n" },
@@ -413,3 +455,5 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 		vim.api.nvim_command("checktime")
 	end,
 })
+
+require("edgy").open()
