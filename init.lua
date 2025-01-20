@@ -170,7 +170,6 @@ renamer.setup({
 })
 
 -- Grug setup
---[[
 vim.api.nvim_create_autocmd("BufEnter", {
 	pattern = "Grug FAR*",
 	callback = function(ev)
@@ -178,7 +177,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
 		if win > 0 then
 			vim.api.nvim_win_set_width(win, 80)
 			vim.api.nvim_win_call(win, function()
-				vim.cmd(normal! z0)
+				vim.cmd([[normal! z0]])
 			end)
 		end
 	end,
@@ -193,7 +192,6 @@ vim.api.nvim_create_autocmd("BufLeave", {
 		end
 	end,
 })
---]]
 function gruginator()
 	grug = require("grug-far")
 	if grug.has_instance("far") then
@@ -272,6 +270,9 @@ wk.add({
 wk.add({
 	{ "<leader>b", ts_buffers, desc = "Search buffers" },
 	{ "<leader>d", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffer" },
+	{ "<tab>", "<cmd>:bnext<cr>", mode="n" },
+	{ "<s-tab>", "<cmd>:bprev<cr>", mode="n" },
+
 })
 
 -- Files groupst
@@ -282,7 +283,6 @@ function OpenEdgy()
 	require("edgy").toggle()
 end
 wk.add({
-	{ "<leader>e", OpenEdgy, desc = "Open edgy" },
 	{ "<leader>f", group = "Files" },
 	{ "<leader><leader>", ts_recent, desc = "Open file tree", mode = "n" },
 	{ "<leader>ff", OpenOilCwd, desc = "Find File", mode = "n" },
@@ -455,5 +455,3 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 		vim.api.nvim_command("checktime")
 	end,
 })
-
-require("edgy").open()
