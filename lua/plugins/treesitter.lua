@@ -1,5 +1,9 @@
 return {
-	"folke/which-key.nvim",
-	lazy = true,
-	opts = {},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		build = ":TSUpdate",
+	},
+	{
+		"nvim-treesitter/nvim-treesitter-context",
+	},
 }

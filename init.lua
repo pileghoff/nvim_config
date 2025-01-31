@@ -14,7 +14,7 @@ vim.opt.shiftwidth = 4
 
 -- Line numbers + relative
 vim.opt.number = true
-vim.opt.relativenumber = true
+-- vim.opt.relativenumber = true
 
 -- Updatetime
 vim.opt.updatetime = 1000
@@ -107,6 +107,10 @@ require("nvim-treesitter.configs").setup({
 			node_decremental = "V",
 		},
 	},
+})
+
+require("treesitter-context").setup({
+	enable = true,
 })
 
 -- Git
@@ -214,7 +218,10 @@ function grug_far_local()
 		instanceName = "far",
 		staticTitle = "Find and Replace",
 		transient = true,
-		prefills = { paths = vim.fn.expand("%") },
+		prefills = {
+			paths = vim.fn.expand("%"),
+			filesFilter = "!*.{json,html}",
+		},
 	})
 end
 
@@ -233,7 +240,10 @@ function grug_far_local_visual()
 		instanceName = "far",
 		staticTitle = "Find and Replace",
 		transient = true,
-		prefills = { paths = vim.fn.expand("%") },
+		prefills = {
+			paths = vim.fn.expand("%"),
+			filesFilter = "!*.{json,html}",
+		},
 	})
 end
 
@@ -270,9 +280,8 @@ wk.add({
 wk.add({
 	{ "<leader>b", ts_buffers, desc = "Search buffers" },
 	{ "<leader>d", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffer" },
-	{ "<tab>", "<cmd>:bnext<cr>", mode="n" },
-	{ "<s-tab>", "<cmd>:bprev<cr>", mode="n" },
-
+	{ "<tab>", "<cmd>:bnext<cr>", mode = "n" },
+	{ "<s-tab>", "<cmd>:bprev<cr>", mode = "n" },
 })
 
 -- Files groupst
@@ -439,7 +448,7 @@ vim.api.nvim_create_autocmd({ "WinLeave" }, {
 vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 	pattern = { "*" },
 	callback = function()
-		vim.wo.relativenumber = true
+		vim.wo.relativenumber = false
 		vim.wo.number = true
 		vim.wo.numberwidth = 5
 		vim.wo.cursorline = true
