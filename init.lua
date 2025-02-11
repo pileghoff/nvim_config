@@ -94,7 +94,7 @@ require("auto-session").setup({
 })
 
 require("nvim-treesitter.configs").setup({
-	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline", "regex" },
+	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline", "regex", "yaml" },
 	indent = { enable = true },
 	auto_install = true,
 	highlight = {
@@ -431,7 +431,27 @@ require("noice").setup({
 		},
 	},
 })
-require("lualine").setup()
+require("lualine").setup({
+	options = {
+		globalstatus = false,
+	},
+	sections = {
+		lualine_a = {},
+		lualine_b = { "branch", "diff", "diagnostics" },
+		lualine_c = { { "filename", path = 1 } },
+		lualine_x = {},
+		lualine_y = { "searchcount", "selectioncount" },
+		lualine_z = { "location" },
+	},
+	inactive_sections = {
+		lualine_a = {},
+		lualine_b = { "branch", "diff" },
+		lualine_c = { { "filename", path = 1 } },
+		lualine_x = {},
+		lualine_y = { "searchcount" },
+		lualine_z = { "location" },
+	},
+})
 
 -- Setup my prefered window settings every time i switch.
 vim.api.nvim_create_autocmd({ "WinLeave" }, {
