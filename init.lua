@@ -372,6 +372,7 @@ local capabilities = require("blink.cmp").get_lsp_capabilities()
 local lsp = require("lspconfig")
 lsp.clangd.setup(capabilities)
 lsp.pyright.setup(capabilities)
+lsp.basedpyright.setup(capabilities)
 lsp.zls.setup(capabilities)
 lsp.rust_analyzer.setup(capabilities)
 
