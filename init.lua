@@ -113,6 +113,14 @@ require("treesitter-context").setup({
 	enable = true,
 })
 
+-- Add wgsl filetype
+vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
+  pattern = "*.wgsl",
+  callback = function()
+    vim.bo.filetype = "wgsl"
+  end,
+})
+
 -- Git
 local neogit = require("neogit")
 neogit.setup({})
@@ -375,6 +383,7 @@ lsp.pyright.setup(capabilities)
 lsp.basedpyright.setup(capabilities)
 lsp.zls.setup(capabilities)
 lsp.rust_analyzer.setup(capabilities)
+lsp.wgsl_analyzer.setup(capabilities)
 
 -- Other plugins
 require("flash").setup()

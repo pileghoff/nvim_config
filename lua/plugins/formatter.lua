@@ -7,6 +7,13 @@ return {
 			-- Set the log level
 			log_level = vim.log.levels.INFO,
 			filetype = {
+				["wgsl"] = {
+					function()
+						return {
+							exe = "wgslfmt",
+						}
+					end,
+				},
 				lua = {
 					require("formatter.filetypes.lua").stylua,
 				},
@@ -14,6 +21,9 @@ return {
 					require("formatter.filetypes.c").clangformat,
 				},
 				c = {
+					require("formatter.filetypes.c").clangformat,
+				},
+				cuda = {
 					require("formatter.filetypes.c").clangformat,
 				},
 				python = {
