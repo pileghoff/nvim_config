@@ -115,10 +115,10 @@ require("treesitter-context").setup({
 
 -- Add wgsl filetype
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
-  pattern = "*.wgsl",
-  callback = function()
-    vim.bo.filetype = "wgsl"
-  end,
+	pattern = "*.wgsl",
+	callback = function()
+		vim.bo.filetype = "wgsl"
+	end,
 })
 
 -- Git
@@ -229,6 +229,11 @@ function grug_far_local()
 		prefills = {
 			paths = vim.fn.expand("%"),
 			filesFilter = "!*.{json,html}",
+			filesFilter = "!*.{json,html}",
+			flags = "--fixed-strings",
+		},
+		openTargetWindow = {
+			preferredLocation = "right",
 		},
 	})
 end
@@ -251,6 +256,10 @@ function grug_far_local_visual()
 		prefills = {
 			paths = vim.fn.expand("%"),
 			filesFilter = "!*.{json,html}",
+			flags = "--fixed-strings",
+		},
+		openTargetWindow = {
+			preferredLocation = "right",
 		},
 	})
 end
