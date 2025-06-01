@@ -503,3 +503,12 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 		vim.api.nvim_command("checktime")
 	end,
 })
+
+-- Comment toggle
+require('mini.comment').setup()
+vim.api.nvim_create_user_command('Comment', function(opts)
+    require('mini.comment').toggle_lines(opts.line1, opts.line2)
+end, {
+    range = true,
+    desc = "Toggle comment (mini.comment)"
+})
