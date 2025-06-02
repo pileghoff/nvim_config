@@ -89,8 +89,8 @@ vim.api.nvim_create_autocmd("BufReadPost", {
 require("config.lazy")
 require("auto-session").setup({
 	auto_save_enabled = true, -- Enables/disables auto saving
-	auto_restore_enabled = true, --Enables/disables auto restoring
-	auto_session_enabled = true, -- Enables/disables the plugin's auto save and restore features
+	auto_restore_enabled = false, --Enables/disables auto restoring
+	auto_session_enabled = false, -- Enables/disables the plugin's auto save and restore features
 })
 
 require("nvim-treesitter.configs").setup({
@@ -113,6 +113,7 @@ require("treesitter-context").setup({
 	enable = true,
 })
 
+require("flutter-tools").setup({})
 -- Add wgsl filetype
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
 	pattern = "*.wgsl",

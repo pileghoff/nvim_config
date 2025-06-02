@@ -26,6 +26,9 @@ return {
 				cuda = {
 					require("formatter.filetypes.c").clangformat,
 				},
+				dart = {
+					require("formatter.filetypes.dart").dartformat,
+				},
 				python = {
 					require("formatter.filetypes.python").isort,
 					require("formatter.filetypes.python").black,
