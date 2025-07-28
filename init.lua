@@ -93,6 +93,8 @@ require("auto-session").setup({
 	auto_session_enabled = false, -- Enables/disables the plugin's auto save and restore features
 })
 
+require("utils.prompt").setup()
+
 require("nvim-treesitter.configs").setup({
 	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline", "regex", "yaml" },
 	indent = { enable = true },
@@ -181,6 +183,7 @@ local renamer = require("renamer")
 renamer.setup({
 	show_refs = true,
 })
+require("flutter-tools").setup {}
 
 -- Grug setup
 vim.api.nvim_create_autocmd("BufEnter", {
@@ -496,6 +499,7 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 		vim.o.signcolumn = "no"
 	end,
 })
+
 
 -- Auto reload contents of a buffer
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
