@@ -86,12 +86,12 @@ local function get_lsp_code_actions_simple(callback)
 	end
 
 	-- Get the first client's offset encoding for make_range_params
-	local offset_encoding = clients[1] and clients[1].offset_encoding or "utf-16"
+	local offset_encoding = clients[1] and clients[1].offset_encoding or "utf-8"
 
 	-- Create parameters for the code action request
 	local params = vim.lsp.util.make_range_params(0, offset_encoding)
 	params.context = {
-		diagnostics = vim.diagnostic.get(bufnr, { lnum = vim.api.nvim_win_get_cursor(0)[1] - 1 }),
+		diagnostics = vim.diagnostic.get(bufnr, { lnum = vim.api.nvim_win_get_cursor(0)[1] }),
 		triggerKind = 1, -- Manual trigger
 	}
 
