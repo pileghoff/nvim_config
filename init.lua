@@ -111,10 +111,6 @@ require("nvim-treesitter.configs").setup({
 	},
 })
 
-require("treesitter-context").setup({
-	enable = true,
-})
-
 require("flutter-tools").setup({})
 -- Add wgsl filetype
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
@@ -155,59 +151,36 @@ require("oil").setup({
 	},
 })
 
--- Telescope setup
-local ts_builtin = require("telescope.builtin")
-local ts_recent = require("telescope").extensions["recent-files"].recent_files
-local actions = require("telescope.actions")
-require("telescope").setup({
-	pickers = {
-		buffers = {
-			mappings = {
-				n = {
-					["d"] = actions.delete_buffer + actions.move_to_top,
-				},
-			},
-		},
-	},
-	defaults = { path_display = { "truncate" } },
-})
-function ts_buffers()
-	ts_builtin.buffers({
-		sort_mru = true,
-		ignore_current_buffer = true,
-	})
-end
-
 -- LSP Renamer
 local renamer = require("renamer")
 renamer.setup({
 	show_refs = true,
 })
-require("flutter-tools").setup {}
+require("flutter-tools").setup({})
 
 -- Grug setup
-vim.api.nvim_create_autocmd("BufEnter", {
-	pattern = "Grug FAR*",
-	callback = function(ev)
-		local win = vim.fn.bufwinid(ev.buf)
-		if win > 0 then
-			vim.api.nvim_win_set_width(win, 80)
-			vim.api.nvim_win_call(win, function()
-				vim.cmd([[normal! z0]])
-			end)
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd("BufEnter", {
+-- 	pattern = "Grug FAR*",
+-- 	callback = function(ev)
+-- 		local win = vim.fn.bufwinid(ev.buf)
+-- 		if win > 0 then
+-- 			vim.api.nvim_win_set_width(win, 80)
+-- 			vim.api.nvim_win_call(win, function()
+-- 				vim.cmd([[normal! z0]])
+-- 			end)
+-- 		end
+-- 	end,
+-- })
 
-vim.api.nvim_create_autocmd("BufLeave", {
-	pattern = "Grug FAR*",
-	callback = function(ev)
-		local win = vim.fn.bufwinid(ev.buf)
-		if win > 0 then
-			vim.api.nvim_win_set_width(win, 20)
-		end
-	end,
-})
+-- vim.api.nvim_create_autocmd("BufLeave", {
+-- 	pattern = "Grug FAR*",
+-- 	callback = function(ev)
+-- 		local win = vim.fn.bufwinid(ev.buf)
+-- 		if win > 0 then
+-- 			vim.api.nvim_win_set_width(win, 20)
+-- 		end
+-- 	end,
+-- })
 function gruginator()
 	grug = require("grug-far")
 	if grug.has_instance("far") then
@@ -221,6 +194,10 @@ function grug_far()
 		instanceName = "far",
 		staticTitle = "Find and Replace",
 		transient = true,
+		prefills = {
+			filesFilter = "!*.{json,html}",
+			flags = "--fixed-strings",
+		},
 	})
 end
 
@@ -231,13 +208,9 @@ function grug_far_local()
 		staticTitle = "Find and Replace",
 		transient = true,
 		prefills = {
-			paths = vim.fn.expand("%"),
-			filesFilter = "!*.{json,html}",
+			paths = vim.fn.expand("%:."),
 			filesFilter = "!*.{json,html}",
 			flags = "--fixed-strings",
-		},
-		openTargetWindow = {
-			preferredLocation = "right",
 		},
 	})
 end
@@ -248,6 +221,10 @@ function grug_far_visual()
 		instanceName = "far",
 		staticTitle = "Find and Replace",
 		transient = true,
+		prefills = {
+			filesFilter = "!*.{json,html}",
+			flags = "--fixed-strings",
+		},
 	})
 end
 
@@ -258,12 +235,9 @@ function grug_far_local_visual()
 		staticTitle = "Find and Replace",
 		transient = true,
 		prefills = {
-			paths = vim.fn.expand("%"),
+			paths = vim.fn.expand("%:."),
 			filesFilter = "!*.{json,html}",
 			flags = "--fixed-strings",
-		},
-		openTargetWindow = {
-			preferredLocation = "right",
 		},
 	})
 end
@@ -278,7 +252,6 @@ wk.add({
 	{ "<C-f>", grug_far_local_visual, desc = "Find and replace", mode = "v" },
 	{ "<s-f>", grug_far_visual, desc = "Find and replace", mode = "v" },
 	{ "<C-s>", ":w<cr>", desc = "Save" },
-	{ "<C-p>", ts_recent },
 	{ "<C-z>", "u" },
 	{ "<C-r>", ":redo<cr>" },
 	{ "<C-c>", "yiw" }, -- Yank word
@@ -292,33 +265,29 @@ wk.add({
 -- Spell
 wk.add({
 	{ "<leader>s", group = "Spell checker" },
-	{ "<leader>ss", ts_builtin.spell_suggest, desc = "Spell checker" },
+	{ "<leader>ss", Snacks.picker.spelling, desc = "Spell checker" },
 	{ "<leader>sa", "zg", desc = "Add word to dict" },
 	{ "<leader>sr", "zw", desc = "Remove word from dict" },
 })
 
 -- Buffer group
 wk.add({
-	{ "<leader>b", ts_buffers, desc = "Search buffers" },
 	{ "<leader>d", "<cmd>bp<bar>bd#<cr>", desc = "Delete buffer" },
 	{ "<tab>", "<cmd>:bnext<cr>", mode = "n" },
 	{ "<s-tab>", "<cmd>:bprev<cr>", mode = "n" },
 })
 
 -- Files groupst
-function OpenOilCwd()
-	require("oil").open(vim.fn["getcwd"]())
+function OpenOil()
+	require("oil").open_float()
 end
 function OpenEdgy()
 	require("edgy").toggle()
 end
 wk.add({
 	{ "<leader>f", group = "Files" },
-	{ "<leader><leader>", ts_recent, desc = "Open file tree", mode = "n" },
-	{ "<leader>ff", OpenOilCwd, desc = "Find File", mode = "n" },
-	{ "<leader>fe", "<cmd>Oil<cr>", desc = "Find current file in explorer", mode = "n" },
-	{ "<leader>fo", "<cmd>Telescope oldfiles<cr>", desc = "Old files" },
-	{ "<leader>fg", "<cmd>Telescope live_grep<cr>", desc = "Grep File", mode = "n" },
+	{ "<leader><leader>", Snacks.picker.smart, desc = "Open file tree", mode = "n" },
+	{ "<leader>fe", OpenOil, desc = "Find current file in explorer", mode = "n" },
 })
 
 -- Windows group
@@ -355,14 +324,10 @@ wk.add({
 
 -- Code group
 wk.add({
+	{ "c", require("utils.code_action_picker").show_code_actions, desc = "code actions", mode = "n" },
+	{ "c", require("utils.code_action_picker").show_code_actions, desc = "code actions", mode = "v" },
 	{ "<leader>c", group = "code" },
-	{ "<leader>cc", ts_builtin.lsp_document_symbols, desc = "Navigate code", mode = "n" },
 	{ "<leader>cn", renamer.rename, desc = "Rename", mode = "n" },
-	{ "<leader>cw", ts_builtin.lsp_dynamic_workspace_symbols, desc = "Navigate code in workspace", mode = "n" },
-	{ "<leader>cd", ts_builtin.lsp_definitions, desc = "Definition", mode = "n" },
-	{ "<leader>ci", ts_builtin.lsp_implementations, desc = "Implementation", mode = "n" },
-	{ "<leader>cr", ts_builtin.lsp_references, desc = "References", mode = "n" },
-	{ "<leader>cj", ts_builtin.jumplist, desc = "Jumplist", mode = "n" },
 	{ "<leader>ce", vim.diagnostic.open_float, desc = "Diagnostic", mode = "n" },
 	{ "<leader>ch", vim.lsp.buf.hover, desc = "Diagnostic", mode = "n" },
 })
@@ -371,20 +336,6 @@ wk.add({
 wk.add({
 	{ "<leader>g", "<cmd>Neogit kind=replace<cr>", desc = "Git" },
 })
-
--- Spell check on cursorhold
---vim.api.nvim_create_autocmd("CursorHold", {
---	pattern = { "*" },
---	callback = function()
---		if require("cmp.config.context").in_treesitter_capture("spell") then
---			local word = vim.fn.expand("<cword>")
---			if table.getn(vim.spell.check(word)) > 0 then
---				local bad = vim.spell.check(word)
---				wk.show({ keys = "z=" })
---			end
---		end
---	end,
---})
 
 -- Blink LSP setup
 local capabilities = require("blink.cmp").get_lsp_capabilities()
@@ -395,7 +346,7 @@ lsp.clangd.setup(capabilities)
 lsp.pyright.setup(capabilities)
 lsp.basedpyright.setup(capabilities)
 lsp.zls.setup(capabilities)
-lsp.rust_analyzer.setup(capabilities)
+-- lsp.rust_analyzer.setup(capabilities)
 lsp.wgsl_analyzer.setup(capabilities)
 
 -- Other plugins
@@ -500,7 +451,6 @@ vim.api.nvim_create_autocmd({ "BufEnter", "WinEnter" }, {
 	end,
 })
 
-
 -- Auto reload contents of a buffer
 vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHoldI" }, {
 	pattern = { "*" },
@@ -510,10 +460,10 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "CursorHold", "CursorHo
 })
 
 -- Comment toggle
-require('mini.comment').setup()
-vim.api.nvim_create_user_command('Comment', function(opts)
-    require('mini.comment').toggle_lines(opts.line1, opts.line2)
+require("mini.comment").setup()
+vim.api.nvim_create_user_command("Comment", function(opts)
+	require("mini.comment").toggle_lines(opts.line1, opts.line2)
 end, {
-    range = true,
-    desc = "Toggle comment (mini.comment)"
+	range = true,
+	desc = "Toggle comment (mini.comment)",
 })

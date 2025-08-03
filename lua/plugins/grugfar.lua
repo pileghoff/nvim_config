@@ -4,6 +4,10 @@ return {
 		headerMaxWidth = 80,
 		wrap = false,
 		windowCreationCommand = "topleft vsplit",
+		openTargetWindow = {
+			preferredLocation = "right",
+		},
+
 		keymaps = {
 			qflist = { n = "<localleader>q" },
 			syncLocations = { n = "<localleader>s" },
