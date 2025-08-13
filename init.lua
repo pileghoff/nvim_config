@@ -279,7 +279,7 @@ wk.add({
 
 -- Files groupst
 function OpenOil()
-	require("oil").open_float()
+	require("oil").open()
 end
 function OpenEdgy()
 	require("edgy").toggle()
@@ -324,9 +324,10 @@ wk.add({
 
 -- Code group
 wk.add({
-	{ "c", require("utils.code_action_picker").show_code_actions, desc = "code actions", mode = "n" },
-	{ "c", require("utils.code_action_picker").show_code_actions, desc = "code actions", mode = "v" },
+	{ "c", require("actions-preview").code_actions, desc = "code actions", mode = "n" },
+	{ "c", require("actions-preview").code_actions, desc = "code actions", mode = "v" },
 	{ "<leader>c", group = "code" },
+	{ "<leader>cc", require("actions-preview").code_actions, desc = "code actions", mode = "n" },
 	{ "<leader>cn", renamer.rename, desc = "Rename", mode = "n" },
 	{ "<leader>ce", vim.diagnostic.open_float, desc = "Diagnostic", mode = "n" },
 	{ "<leader>ch", vim.lsp.buf.hover, desc = "Diagnostic", mode = "n" },
@@ -348,6 +349,23 @@ lsp.basedpyright.setup(capabilities)
 lsp.zls.setup(capabilities)
 -- lsp.rust_analyzer.setup(capabilities)
 lsp.wgsl_analyzer.setup(capabilities)
+
+require("actions-preview").setup({
+	diff = {
+		ctxlen = 1,
+	},
+	highlight_command = {
+		require("actions-preview.highlight").delta("delta --hunk-header-style omit --file-style omit"),
+	},
+	-- priority list of preferred backend
+	backend = { "snacks" },
+
+	--- options for snacks picker
+	---@type snacks.picker.Config
+	snacks = {
+		layout = { preset = "dropdown" },
+	},
+})
 
 -- Other plugins
 require("flash").setup()
@@ -466,4 +484,11 @@ vim.api.nvim_create_user_command("Comment", function(opts)
 end, {
 	range = true,
 	desc = "Toggle comment (mini.comment)",
+})
+
+-- Auto close buffers
+require("early-retirement").setup({
+	retirementAgeMins = 30,
+	minimumBufferNum = 3,
+	deleteBufferWhenFileDeleted = true,
 })
