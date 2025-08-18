@@ -2,6 +2,16 @@
 vim.keymap.set("n", "<Space>", "<Nop>", { silent = true })
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
+
+if vim.g.neovide then
+	vim.api.nvim_set_keymap("v", "<c-c>", '"+y', { noremap = true })
+	vim.api.nvim_set_keymap("n", "<c-v>", 'l"+P', { noremap = true })
+	vim.api.nvim_set_keymap("v", "<c-v>", '"+P', { noremap = true })
+	vim.api.nvim_set_keymap("c", "<c-v>", "<C-R>+", { noremap = true })
+	vim.api.nvim_set_keymap("i", "<c-v>", "<C-R>+", { noremap = true })
+	vim.api.nvim_set_keymap("t", "<c-v>", '<C-\\><C-n>"+Pi', { noremap = true })
+end
+
 -- Disable netrw, since we use nvimtree vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
 
@@ -58,6 +68,9 @@ vim.opt.laststatus = 3
 -- Default splitting will cause your main splits to jump when opening an edgebar.
 -- To prevent this, set `splitkeep` to either `screen` or `topline`.
 vim.opt.splitkeep = "screen"
+
+vim.keymap.set("v", "<Tab>", ">gv", { noremap = true, silent = true, desc = "Indent selected lines" })
+vim.keymap.set("v", "<S-Tab>", "<gv", { noremap = true, silent = true, desc = "Un-indent selected lines" })
 
 -- always center search results
 vim.keymap.set("n", "n", "nzz", { silent = true })
@@ -209,7 +222,7 @@ function grug_far_local()
 		transient = true,
 		prefills = {
 			paths = vim.fn.expand("%:."),
-			filesFilter = "!*.{json,html}",
+			filesFilter = "!*.{json,html}, !build/*",
 			flags = "--fixed-strings",
 		},
 	})
@@ -236,7 +249,7 @@ function grug_far_local_visual()
 		transient = true,
 		prefills = {
 			paths = vim.fn.expand("%:."),
-			filesFilter = "!*.{json,html}",
+			filesFilter = "!*.{json,html}, !build/*",
 			flags = "--fixed-strings",
 		},
 	})

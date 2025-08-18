@@ -14,6 +14,9 @@ return {
 						}
 					end,
 				},
+				json = {
+					require("formatter.filetypes.json").prettier,
+				},
 				lua = {
 					require("formatter.filetypes.lua").stylua,
 				},
