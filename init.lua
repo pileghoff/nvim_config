@@ -33,7 +33,7 @@ vim.opt.updatetime = 1000
 vim.opt.splitright = true
 vim.opt.splitbelow = true
 
--- Remap parte, so it wont yank what it relpaces
+-- Remap paste, so it wont yank what it relpaces
 vim.keymap.set("x", "p", function()
 	return 'pgv"' .. vim.v.register .. "y"
 end, { remap = false, expr = true })
@@ -48,7 +48,7 @@ vim.opt.ignorecase = true
 vim.opt.smartcase = true
 
 -- Remove signcolumn
-vim.g.signcolumn = no
+vim.g.signcolumn = "no"
 
 -- more useful diffs (nvim -d)
 --- by ignoring whitespace
@@ -124,7 +124,9 @@ require("nvim-treesitter.configs").setup({
 	},
 })
 
-require("flutter-tools").setup({})
+require("flutter-tools").setup({
+	fvm = true,
+})
 -- Add wgsl filetype
 vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
 	pattern = "*.wgsl",
@@ -135,10 +137,15 @@ vim.api.nvim_create_autocmd({ "BufNewFile", "BufRead" }, {
 
 -- Git
 local neogit = require("neogit")
-neogit.setup({})
+neogit.setup({
+	filewatcher = {
+		interval = 200,
+		enabled = true,
+	},
+	graph_style = "unicode",
+})
 
 -- Formatter
-require("gruvbox").setup()
 local augroup = vim.api.nvim_create_augroup
 local autocmd = vim.api.nvim_create_autocmd
 augroup("__formatter__", { clear = true })
@@ -200,7 +207,7 @@ function gruginator()
 		grug.kill_instance("far")
 	end
 end
-
+filesFilter = "!*.{json,html,g.dart,gr.dart,freezed.dart}"
 function grug_far()
 	gruginator()
 	require("grug-far").open({
@@ -208,7 +215,7 @@ function grug_far()
 		staticTitle = "Find and Replace",
 		transient = true,
 		prefills = {
-			filesFilter = "!*.{json,html}",
+			filesFilter = filesFilter,
 			flags = "--fixed-strings",
 		},
 	})
@@ -222,7 +229,7 @@ function grug_far_local()
 		transient = true,
 		prefills = {
 			paths = vim.fn.expand("%:."),
-			filesFilter = "!*.{json,html}, !build/*",
+			filesFilter = filesFilter,
 			flags = "--fixed-strings",
 		},
 	})
@@ -235,7 +242,7 @@ function grug_far_visual()
 		staticTitle = "Find and Replace",
 		transient = true,
 		prefills = {
-			filesFilter = "!*.{json,html}",
+			filesFilter = filesFilter,
 			flags = "--fixed-strings",
 		},
 	})
@@ -249,7 +256,7 @@ function grug_far_local_visual()
 		transient = true,
 		prefills = {
 			paths = vim.fn.expand("%:."),
-			filesFilter = "!*.{json,html}, !build/*",
+			filesFilter = filesFilter,
 			flags = "--fixed-strings",
 		},
 	})
@@ -268,12 +275,47 @@ wk.add({
 	{ "<C-z>", "u" },
 	{ "<C-r>", ":redo<cr>" },
 	{ "<C-c>", "yiw" }, -- Yank word
-	{ "<C-Up>", "6k", mode = "n" },
-	{ "<C-Down>", "6j", mode = "n" },
+	{ "<C-Up>", "15k", mode = "n" },
+	{ "<C-Down>", "15j", mode = "n" },
 	--{ "<C-Left>", "^" },
 	--{ "<C-Right>", "$" },
 	{ "<C-Down>", ":m '>+1<CR>gv=gv", mode = "v" },
 	{ "<C-Up>", ":m '<-2<CR>gv=gv", mode = "v" },
+})
+
+wk.add({
+	{
+		"s",
+		mode = { "n", "x", "o" },
+		function()
+			require("flash").jump()
+		end,
+		desc = "Flash",
+	},
+	{
+		"<Up>",
+		mode = { "n" },
+		function()
+			require("flash").jump()
+		end,
+		desc = "Flash",
+	},
+	{
+		"<Down>",
+		mode = { "n" },
+		function()
+			require("flash").jump()
+		end,
+		desc = "Flash",
+	},
+	{
+		"S",
+		mode = { "n", "x", "o" },
+		function()
+			require("flash").treesitter()
+		end,
+		desc = "Flash Treesitter",
+	},
 })
 -- Spell
 wk.add({
@@ -294,12 +336,12 @@ wk.add({
 function OpenOil()
 	require("oil").open()
 end
-function OpenEdgy()
-	require("edgy").toggle()
-end
+
+require("fff").setup()
+
 wk.add({
 	{ "<leader>f", group = "Files" },
-	{ "<leader><leader>", Snacks.picker.smart, desc = "Open file tree", mode = "n" },
+	{ "<leader><leader>", require("fff").find_files, desc = "Open file tree", mode = "n" },
 	{ "<leader>fe", OpenOil, desc = "Find current file in explorer", mode = "n" },
 })
 
@@ -352,16 +394,13 @@ wk.add({
 })
 
 -- Blink LSP setup
-local capabilities = require("blink.cmp").get_lsp_capabilities()
+require("blink.cmp")
 
 -- LSP setup
 local lsp = require("lspconfig")
-lsp.clangd.setup(capabilities)
-lsp.pyright.setup(capabilities)
-lsp.basedpyright.setup(capabilities)
-lsp.zls.setup(capabilities)
--- lsp.rust_analyzer.setup(capabilities)
-lsp.wgsl_analyzer.setup(capabilities)
+-- vim.lsp.enable("clangd")
+vim.lsp.enable("pyright")
+-- vim.lsp.enable("wgsl_analyzer")
 
 require("actions-preview").setup({
 	diff = {
@@ -389,14 +428,13 @@ require("noice").setup({
 		override = {
 			["vim.lsp.util.convert_input_to_markdown_lines"] = true,
 			["vim.lsp.util.stylize_markdown"] = true,
-			["cmp.entry.get_documentation"] = true, -- requires hr shush/nvim-cmp
+			["cmp.entry.get_documentation"] = true,
 		},
 		documentation = {
 			view = "hover",
 		},
 	},
 
-	-- you can enable a preset for easier configuration
 	presets = {
 		bottom_search = true, -- use a classic bottom cmdline for search
 		inc_rename = true, -- enables an input dialog for inc-rename.nvim
