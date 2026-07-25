@@ -37,7 +37,13 @@ return {
 					require("formatter.filetypes.python").black,
 				},
 				rust = {
-					require("formatter.filetypes.rust").rustfmt,
+					function()
+						return {
+							exe = "rustfmt",
+							args = { "--edition 2024" },
+							stdin = true,
+						  }
+					end,
 				},
 				zig = {
 					require("formatter.filetypes.zig").zigfmt,

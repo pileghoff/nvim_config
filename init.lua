@@ -108,7 +108,7 @@ require("auto-session").setup({
 
 require("utils.prompt").setup()
 
-require("nvim-treesitter.configs").setup({
+require("nvim-treesitter.config").setup({
 	ensure_installed = { "c", "lua", "rust", "markdown", "markdown_inline", "regex", "yaml" },
 	indent = { enable = true },
 	auto_install = true,
@@ -155,6 +155,34 @@ autocmd("BufWritePost", {
 })
 
 -- Files
+require("mini.icons").setup()
+local fyler = require('fyler')
+fyler.setup({
+  auto_confirm_simple_mutation = true,
+	integrations = {
+		icon = "nvim_web_devicons",
+	},
+	extensions = {
+		trash = {
+			enabled = true,
+		},
+	},
+	mappings = {
+		n = {
+			['<Tab>'] = {
+			  action = 'select',
+			  args = { pick = false },
+			},
+		},
+	},
+	ui = {
+		hidden_items = {
+			switches = {},
+		},
+		indent_guides = true,
+	},
+})
+
 require("oil").setup({
 	default_file_explorer = true,
 	skip_confirm_for_simple_edits = true,
@@ -293,22 +321,6 @@ wk.add({
 		desc = "Flash",
 	},
 	{
-		"<Up>",
-		mode = { "n" },
-		function()
-			require("flash").jump()
-		end,
-		desc = "Flash",
-	},
-	{
-		"<Down>",
-		mode = { "n" },
-		function()
-			require("flash").jump()
-		end,
-		desc = "Flash",
-	},
-	{
 		"S",
 		mode = { "n", "x", "o" },
 		function()
@@ -333,8 +345,10 @@ wk.add({
 })
 
 -- Files groupst
+
 function OpenOil()
-	require("oil").open()
+	-- require("oil").open()
+	fyler.open()
 end
 
 require("fff").setup()
